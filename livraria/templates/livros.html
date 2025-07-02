@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro de Livros</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 { color: #2c3e50; }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 15px;
+    }
+    button:hover { background-color: #2980b9; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th { background: #f4f4f4; }
+    .disponivel { color: green; font-weight: bold; }
+    .indisponivel { color: red; font-weight: bold; }
+    a { text-decoration: none; color: #3498db; }
+    a:hover { color: #2980b9; }
+  </style>
+</head>
+<body>
+  <h2>📚 Cadastro de Livros</h2>
+
+  <form action="/livros" method="post">
+    <input name="titulo" placeholder="Título" required />
+    <input name="autor" placeholder="Autor" />
+    <input name="categoria" placeholder="Categoria" />
+    <input name="quantidade" type="number" min="1" placeholder="Quantidade em estoque" required />
+    <button type="submit">Cadastrar</button>
+  </form>
+
+  <h3>📖 Lista de Livros</h3>
+  <table>
+  <thead>
+    <tr>
+      <th>Título</th>
+      <th>Autor</th>
+      <th>Categoria</th>
+      <th>Estoque</th>
+      <th>Status</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for livro in livros %}
+    <tr>
+      <td>{{ livro['titulo'] }}</td>
+      <td>{{ livro['autor'] }}</td>
+      <td>{{ livro['categoria'] }}</td>
+      <td>{{ livro['quantidade'] }}</td>
+      <td>
+        {% if livro['quantidade'] > 0 %}
+          <span class="disponivel">✅ Disponível</span>
+        {% else %}
+          <span class="indisponivel">❌ Indisponível</span>
+        {% endif %}
+      </td>
+      <td>
+        <a href="{{ url_for('edit_livro', id=livro['id']) }}">Editar</a>
+        <form action="{{ url_for('delete_livro', id=livro['id']) }}" method="post" style="display:inline;">
+          <button type="submit" onclick="return confirm('Deseja remover este livro?')">Remover</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+  <a href="/">⬅ Voltar</a>
+</body>
+</html>

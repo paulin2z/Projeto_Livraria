@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Livro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h2>Editar Livro</h2>
+  <form action="{{ url_for('edit_livro', id=livro['id']) }}" method="post">
+    <label for="titulo">Título:</label>
+    <input id="titulo" name="titulo" value="{{ livro['titulo'] }}" required />
+    <label for="autor">Autor:</label>
+    <input id="autor" name="autor" value="{{ livro['autor'] }}" />
+    <label for="categoria">Categoria:</label>
+    <input id="categoria" name="categoria" value="{{ livro['categoria'] }}" />
+    <label for="quantidade">Quantidade em estoque:</label>
+    <input id="quantidade" name="quantidade" type="number" min="0" value="{{ livro['quantidade'] }}" required />
+    <button type="submit">Salvar Alterações</button>
+  </form>
+  <a href="{{ url_for('livros') }}">⬅ Voltar</a>
+</body>
+</html>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+  }
+  h2 { color: #2c3e50; }
+  form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px;
+  }
+  button:hover { background-color: #2980b9; }
+  a { text-decoration: none; color: #3498db; }
+  a:hover { color: #2980b9; }
+</style>

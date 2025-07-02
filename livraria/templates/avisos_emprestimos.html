@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Avisos de Empréstimos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f9f9f9; margin-bottom: 10px; padding: 12px; border-radius: 6px; }
+    a { margin-right: 12px; text-decoration: none; color: #0984e3; }
+  </style>
+</head>
+<body>
+  <h2>Empréstimos a vencer ou atrasados</h2>
+  <ul>
+    {% for aviso in avisos %}
+      <li>
+        <strong>Livro:</strong> {{ aviso.titulo }}<br>
+        <strong>Pessoa:</strong> {{ aviso.nome }}<br>
+        <strong>Data de devolução:</strong> {{ aviso.data_devolucao }}<br>
+        <strong>Status:</strong> {{ aviso.status }} ({{ aviso.dias_para_devolucao }} dias)<br>
+        <form action="{{ url_for('renovar_emprestimo', emprestimo_id=aviso.id) }}" method="post" style="display:inline;">
+          <button type="submit">Renovar +5 dias</button>
+        </form>
+        <form action="{{ url_for('devolver_emprestimo', emprestimo_id=aviso.id) }}" method="post" style="display:inline;">
+          <button type="submit">Marcar como devolvido</button>
+        </form>
+      </li>
+    {% else %}
+      <li>Não há empréstimos próximos do prazo ou atrasados.</li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('index') }}">⬅ Voltar</a>
+</body>
+</html>

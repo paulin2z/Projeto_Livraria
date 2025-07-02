@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro de Pessoas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f6fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      color: #2d3436;
+    }
+
+    form.cadastro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    form.cadastro label {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    form.cadastro input {
+      padding: 10px;
+      border: 1px solid #dcdde1;
+      border-radius: 6px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    form.cadastro button {
+      grid-column: span 2;
+      padding: 12px;
+      background-color: #0984e3;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    form.cadastro button:hover {
+      background-color: #74b9ff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fefefe;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    th {
+      background: #dfe6e9;
+      font-weight: 600;
+      color: #2d3436;
+    }
+
+    tr:hover {
+      background-color: #f1f2f6;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 8px;
+    }
+
+    .acoes a, .acoes button {
+      padding: 6px 10px;
+      font-size: 0.9em;
+      text-decoration: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .acoes a {
+      background: #dfe6e9;
+      color: #2d3436;
+    }
+
+    .acoes a:hover {
+      background: #b2bec3;
+    }
+
+    .acoes button {
+      background: #ffe6e6;
+      color: #d63031;
+    }
+
+    .acoes button:hover {
+      background: #fab1a0;
+    }
+
+    .voltar {
+      display: inline-block;
+      margin-top: 24px;
+      color: #0984e3;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .voltar:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      form.cadastro {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>👤 Cadastro de Pessoas</h2>
+    <form class="cadastro" action="{{ url_for('pessoas') }}" method="post">
+      <div>
+        <label for="nome">Nome:</label>
+        <input id="nome" name="nome" required>
+      </div>
+      <div>
+        <label for="contato">Contato:</label>
+        <input id="contato" name="contato">
+      </div>
+      <div>
+        <label for="data_retirada">Data da Retirada:</label>
+        <input type="date" id="data_retirada" name="data_retirada" required>
+      </div>
+      <div>
+        <label for="hora_retirada">Horário da Retirada:</label>
+        <input type="time" id="hora_retirada" name="hora_retirada" required>
+      </div>
+      <button type="submit">Cadastrar Pessoa</button>
+    </form>
+
+    <h3>👥 Lista de Pessoas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Contato</th>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pessoa in pessoas %}
+        <tr>
+          <td>{{ pessoa['nome'] }}</td>
+          <td>{{ pessoa['contato'] }}</td>
+          <td>{{ pessoa['data_retirada'] }}</td>
+          <td>{{ pessoa['hora_retirada'] }}</td>
+          <td>
+            <div class="acoes">
+              <a href="{{ url_for('edit_pessoa', id=pessoa['id']) }}">✏️ Editar</a>
+              <form action="{{ url_for('delete_pessoa', id=pessoa['id']) }}" method="post" style="display:inline;" class="form-excluir">
+                <button type="submit" data-nome="{{ pessoa['nome'] }}">🗑️ Excluir</button>
+              </form>
+              <a href="{{ url_for('emprestimos_por_pessoa', pessoa_id=pessoa['id']) }}">📅 Empréstimos</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{{ url_for('index') }}" class="voltar">⬅ Voltar ao Início</a>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.form-excluir').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+          const nome = form.querySelector('button').getAttribute('data-nome');
+          if (!confirm('Deseja realmente excluir a pessoa: ' + nome + '?')) {
+            e.preventDefault();
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+  // Substitui a entrada atual no histórico pelo link da página principal
+  if (window.history.replaceState) {
+    window.history.replaceState(null, '', '/');
+  }
+</script>
+
+</body>
+</html>

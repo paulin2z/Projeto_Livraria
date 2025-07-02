@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro de Pessoas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    main {
+      width: 100%;
+      max-width: 700px;
+      margin: 32px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px #0002;
+      padding: 32px 24px;
+    }
+    h2, h3 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    form.cadastro {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 32px;
+    }
+    form.cadastro label {
+      flex: 1 1 100px;
+      font-weight: bold;
+    }
+    form.cadastro input {
+      flex: 2 1 200px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form.cadastro button {
+      background: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    form.cadastro button:hover {
+      background: #217dbb;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      background: #fafbfc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px #0001;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #ecf0f1;
+      color: #34495e;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover {
+      background: #f1f8ff;
+    }
+    .acoes {
+      display: flex;
+      gap: 8px;
+    }
+    .acoes a, .acoes form {
+      display: inline-block;
+      margin: 0;
+    }
+    .acoes a, .acoes button {
+      background: #eee;
+      border: none;
+      color: #333;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.2s, color 0.2s;
+    }
+    .acoes a:hover {
+      background: #d1ecf1;
+    }
+    .acoes button:hover {
+      background: #f8d7da;
+      color: #c82333;
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 12px 4px;
+      }
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      th, td {
+        padding: 8px 4px;
+      }
+      tr {
+        margin-bottom: 12px;
+      }
+      .acoes {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+    .voltar {
+      display: inline-block;
+      margin-top: 16px;
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .voltar:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <script>
+    function confirmarExclusao(nome) {
+      return confirm('Deseja realmente excluir a pessoa: ' + nome + '?');
+    }
+  </script>
+</head>
+<body>
+  <main>
+    <h2>👤 Cadastro de Pessoas</h2>
+    <form class="cadastro" action="{{ url_for('pessoas') }}" method="post" autocomplete="off">
+      <label for="nome">Nome:</label>
+      <input id="nome" name="nome" placeholder="Nome" required />
+      <label for="contato">Contato:</label>
+      <input id="contato" name="contato" placeholder="Contato" />
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <h3>👥 Lista de Pessoas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Contato</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pessoa in pessoas %}
+        <tr>
+          <td>{{ pessoa['nome'] }}</td>
+          <td>{{ pessoa['contato'] }}</td>
+          <td>
+            <div class="acoes">
+              <a href="{{ url_for('edit_pessoa', id=pessoa['id']) }}">✏️ Editar</a>
+              <form action="{{ url_for('delete_pessoa', id=pessoa['id']) }}" method="post" class="form-excluir" style="display:inline;">
+  <button type="submit" data-nome="{{ pessoa['nome']|e }}">🗑️ Excluir</button>
+</form>
+                <a href="{{ url_for('emprestimos_por_pessoa', pessoa_id=pessoa['id']) }}">📅 Empréstimos</am>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="/" class="voltar">⬅ Voltar</a>
+  </main>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.form-excluir').forEach(function(form) {
+      form.addEventListener('submit', function(e) {
+        var nome = form.querySelector('button[type="submit"]').getAttribute('data-nome');
+        if (!confirm('Deseja realmente excluir a pessoa: ' + nome + '?')) {
+          e.preventDefault();
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

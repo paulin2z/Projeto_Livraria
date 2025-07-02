@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Empréstimos de {{ pessoa['nome'] }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #3498db;
+    }
+  </style>
+</head>
+<body>
+  <h2>📚 Empréstimos de {{ pessoa['nome'] }}</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Livro</th>
+        <th>Data do Empréstimo</th>
+        <th>Data de Devolução</th>
+        <th>Devolvido</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in emprestimos %}
+      <tr>
+        <td>{{ e['titulo'] }}</td>
+        <td>{{ e['data_emprestimo'] }}</td>
+        <td>{{ e['data_devolucao'] }}</td>
+        <td>{{ 'Sim' if e['devolvido'] else 'Não' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{ url_for('pessoas') }}">⬅ Voltar</a>
+</body>
+</html>
+<script>
+  function confirmarExclusao(nome) {
+    return confirm('Deseja realmente excluir a pessoa: ' + nome + '?');
+  }

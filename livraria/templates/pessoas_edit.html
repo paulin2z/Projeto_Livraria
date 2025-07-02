@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Pessoa</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    main {
+      width: 100%;
+      max-width: 700px;
+      margin: 32px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px #0002;
+      padding: 32px 24px;
+    }
+    h2 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #217dbb;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>✏️ Editar Pessoa</h2>
+
+    <form action="{{ url_for('edit_pessoa', id=pessoa['id']) }}" method="post">
+  <label for="nome">Nome:</label>
+  <input id="nome" name="nome" value="{{ pessoa['nome'] }}" required />
+  <label for="contato">Contato:</label>
+  <input id="contato" name="contato" value="{{ pessoa['contato'] }}" />
+  <label for="data_retirada">Data da Retirada:</label>
+  <input id="data_retirada" name="data_retirada" type="date" value="{{ pessoa['data_retirada'] }}" required />
+  <label for="hora_retirada">Horário da Retirada:</label>
+  <input id="hora_retirada" name="hora_retirada" type="time" value="{{ pessoa['hora_retirada'] }}" required />
+  <button type="submit">Salvar Alterações</button>
+</form>
+
+    <a href="{{ url_for('pessoas') }}">⬅ Voltar</a>
+  </main>
+</body>
+</html>
