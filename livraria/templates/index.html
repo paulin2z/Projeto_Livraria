@@ -36,7 +36,10 @@
   </style>
 </head>
 <body>
-  <h1>📚 Sistema da Livraria</h1>
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <img src="{{ url_for('static', filename='TEPO.jpg') }}" alt="Logo TEPO" style="height: 100px; border-radius: 8px; box-shadow: 0 2px 8px #ccc;">
+    <h1 style="margin: 0;">📚 Sistema da Livraria</h1>
+  </div>
 
   <ul>
     <li><a href="/livros">📖 Ver Livros</a></li>
