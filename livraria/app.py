@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from functools import wraps
 
 app = Flask(__name__)
@@ -176,8 +176,7 @@ def emprestimos_por_pessoa(pessoa_id):
     conn.close()
     return render_template('emprestimos_por_pessoa.html', pessoa=pessoa, emprestimos=emprestimos)
 
-from datetime import datetime
-
+# ---------- Avisos de Empréstimos ----------
 @app.route('/emprestimos/avisos')
 def emprestimos_avisos():
     conn = get_db_connection()
@@ -218,8 +217,7 @@ def emprestimos_avisos():
 
     return render_template('avisos_emprestimos.html', avisos=avisos)
 
-from datetime import datetime, timedelta
-
+# ---------- Renovar Empréstimo ----------
 @app.route('/emprestimos/<int:emprestimo_id>/renovar', methods=['POST'])
 def renovar_emprestimo(emprestimo_id):
     conn = get_db_connection()
@@ -244,7 +242,7 @@ def renovar_emprestimo(emprestimo_id):
     conn.close()
     return redirect(url_for('emprestimos_avisos'))
 
-import sqlite3
+# ---------- Garante coluna quantidade ----------
 conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
 try:
@@ -289,12 +287,23 @@ def emprestimos():
         ORDER BY e.data_emprestimo DESC
     ''').fetchall()
 
+    # Adiciona o campo 'atrasado' para cada empréstimo
+    emprestimos_list = []
+    for emp in emprestimos:
+        emp_dict = dict(emp)
+        if not emp_dict['devolvido']:
+            emp_dict['atrasado'] = date.today().isoformat() > emp_dict['data_devolucao']
+        else:
+            emp_dict['atrasado'] = False
+        emprestimos_list.append(emp_dict)
+
     # Só livros disponíveis
     livros = cursor.execute('SELECT * FROM livros WHERE quantidade > 0').fetchall()
     pessoas = cursor.execute('SELECT * FROM pessoas').fetchall()
     conn.close()
-    return render_template('emprestimos.html', emprestimos=emprestimos, livros=livros, pessoas=pessoas)
+    return render_template('emprestimos.html', emprestimos=emprestimos_list, livros=livros, pessoas=pessoas)
 
+# ---------- Devolver Empréstimo ----------
 @app.route('/emprestimos/<int:emprestimo_id>/devolver', methods=['POST'])
 def devolver_emprestimo(emprestimo_id):
     conn = get_db_connection()
@@ -313,6 +322,7 @@ def devolver_emprestimo(emprestimo_id):
     conn.close()
     return redirect(url_for('emprestimos'))
 
+# ---------- Excluir Livro ----------
 @app.route('/livros/delete/<int:id>', methods=['POST'])
 def delete_livro(id):
     conn = get_db_connection()
@@ -322,6 +332,7 @@ def delete_livro(id):
     conn.close()
     return redirect(url_for('livros'))
 
+# ---------- Editar Livro ----------
 @app.route('/livros/edit/<int:id>', methods=['GET', 'POST'])
 def edit_livro(id):
     conn = get_db_connection()
@@ -343,8 +354,6 @@ def edit_livro(id):
     if livro is None:
         return 'Livro não encontrado', 404
     return render_template('livros_edit.html', livro=livro)
-
-
 
 # ---------- Inicialização ----------
 if __name__ == '__main__':

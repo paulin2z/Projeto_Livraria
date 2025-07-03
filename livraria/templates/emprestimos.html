@@ -20,8 +20,9 @@
     table { width: 100%; border-collapse: collapse; background: #fff; margin-bottom: 20px; }
     th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
     th { background: #f4f4f4; }
-    .devolvido { color: green; }
+    .devolvido { color: green; font-weight: bold; }
     .pendente { color: orange; }
+    .atrasado { color: red; font-weight: bold; }
     a { text-decoration: none; color: #3498db; }
     a:hover { color: #2980b9; }
   </style>
@@ -41,8 +42,8 @@
         <option value="{{ livro['id'] }}">{{ livro['titulo'] }} ({{ livro['quantidade'] }} disponíveis)</option>
       {% endfor %}
     </select>
-    <input type="date" name="data_emprestimo" required value="{{ ('' | safe) }}">
-    <input type="date" name="data_devolucao" required value="{{ ('' | safe) }}">
+    <input type="date" name="data_emprestimo" required>
+    <input type="date" name="data_devolucao" required>
     <button type="submit">Registrar</button>
   </form>
 
@@ -58,24 +59,34 @@
       </tr>
     </thead>
     <tbody>
-      {% for emp in emprestimos %}
-      <tr>
-        <td>{{ emp['pessoa_nome'] }}</td>
-        <td>{{ emp['livro_titulo'] }}</td>
-        <td>{{ emp['data_emprestimo'] }}</td>
-        <td>{{ emp['data_devolucao'] }}</td>
-        <td>
-  {% if emp['devolvido'] %}
-    <span class="devolvido">Devolvido</span>
-  {% else %}
-    <form action="{{ url_for('devolver_emprestimo', emprestimo_id=emp['id']) }}" method="post" style="display:inline;">
-      <button type="submit" onclick="return confirm('Confirmar devolução?')">Devolver</button>
-    </form>
-    <span class="pendente">Pendente</span>
-  {% endif %}
-</td>
-      </tr>
-      {% endfor %}
+      {% if emprestimos %}
+        {% for emp in emprestimos %}
+        <tr>
+          <td>{{ emp['pessoa_nome'] }}</td>
+          <td>{{ emp['livro_titulo'] }}</td>
+          <td>{{ emp['data_emprestimo'] }}</td>
+          <td>{{ emp['data_devolucao'] }}</td>
+          <td>
+            {% if emp['devolvido'] %}
+              <span class="devolvido">Devolvido</span>
+            {% else %}
+              <form action="{{ url_for('devolver_emprestimo', emprestimo_id=emp['id']) }}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Confirmar devolução?')">Devolver</button>
+              </form>
+              {% if emp['atrasado'] %}
+                <span class="atrasado">Atrasado!</span>
+              {% else %}
+                <span class="pendente">Pendente</span>
+              {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5">Nenhum empréstimo registrado.</td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
   <a href="/">⬅ Voltar</a>
